@@ -144,14 +144,15 @@ export const getDisplayDistrict = (districtId) => {
 
 export const getDisplayConstituency = (districtName, constituencyId) => {
   if (!districtName || !constituencyId) return '';
+  const cleanId = constituencyId.includes('-') ? constituencyId.split('-')[1] : constituencyId;
   const list = [...(CONSTITUENCIES_NEW[districtName] || []), ...(CONSTITUENCIES_OLD[districtName] || [])];
   
   // 1. Exact or normalised match
-  let found = list.find(c => normUserGeo(c) === normUserGeo(constituencyId));
+  let found = list.find(c => normUserGeo(c) === normUserGeo(cleanId));
   if (found) return found;
 
   // 2. Initial letters / abbreviation match (e.g., "KRN" for "Krishna Nagar")
-  const normId = normUserGeo(constituencyId);
+  const normId = normUserGeo(cleanId);
   found = list.find(c => {
     const words = c.toLowerCase().split(/[\s\-]+/);
     const initials = words.map(w => w[0]).join('');
